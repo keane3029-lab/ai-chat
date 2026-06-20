@@ -85,7 +85,7 @@ async function sendMessage() {
         if (!historyRes.ok) throw new Error(`Supabase Fetch History Failed: ${historyRes.status}`);
         const history = await historyRes.json();
 
-        // 5. Query OpenRouter (Using the guaranteed free llama 3 model)
+        // 5. Query OpenRouter
         const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
