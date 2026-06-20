@@ -1,6 +1,6 @@
 const SUPABASE_URL = "https://fpnayeftqadzotnwrpxe.supabase.co";
 // Double check that your complete key is pasted here:
-const SUPABASE_ANON_KEY = "sb_publishable_XJzqvm5EBghgVGXlxq8JPA_EGErL..."; 
+const SUPABASE_ANON_KEY = "sb_publishable_XJzqvm5EBghgVGXlxq8JPA_EGErLAeJ"; 
 
 let currentChatId = null;
 
