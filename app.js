@@ -84,11 +84,10 @@ async function sendMessage() {
         const history = await historyRes.json();
 
         // 5. Query OpenRouter (with explicitly free model to ensure no token/credit issues)
-        const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${openRouterKey}`,
-                "Content-Type": "application/json"
+      body: JSON.stringify({
+    model: "google/gemini-2.5-flash:free", // ❌ Change this line
+    messages: history.map(msg => ({ role: msg.role, content: msg.content }))
+})
             },
             body: JSON.stringify({
                 model: "google/gemini-2.5-flash:free",
