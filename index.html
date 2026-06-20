@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <aside class="sidebar">
+            <button class="new-chat-btn" onclick="createNewChat()">+ New Chat</button>
+            <div class="chat-list" id="chatList">
+                </div>
+        </aside>
+
+        <main class="chat-area">
+            <header class="chat-header">
+                <h2 id="currentChatTitle">New Conversation</h2>
+            </header>
+
+            <div class="messages-container" id="messagesContainer">
+                <div class="system-message">Select or start a new chat to begin.</div>
+            </div>
+
+            <div class="input-container">
+                <div class="input-wrapper">
+                    <input type="text" id="userInput" placeholder="Message OpenRouter AI..." onkeydown="if(event.key === 'Enter') sendMessage()">
+                    <button id="sendBtn" onclick="sendMessage()">➔</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
