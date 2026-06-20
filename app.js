@@ -1,5 +1,6 @@
 const SUPABASE_URL = "https://fpnayeftqadzotnwrpxe.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwbmF5ZWZ0cWFkem90bndycHhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzEyMTcsImV4cCI6MjA5NzUwNzIxN30.b0oJ8pPvKEGgVi-YHfOeAU74-7Rkg0YyLhtbUwQhusk"
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwbmF5ZWZ0cWFkem90bndycHxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzEyMTcsImV4cCI6MjA5NzUwNzIxN30.b0oJ8pPvKEGgVi-YHfOeAU74-7Rkg0YyLhtbUwQhusk";
+
 let currentChatId = null;
 
 const supabaseHeaders = {
@@ -25,14 +26,15 @@ function createNewChat() {
 
 function getOpenRouterKey() {
     let key = localStorage.getItem('OPENROUTER_SECRET_KEY');
-    if (!key) {
-        key = prompt("Please enter your secret OpenRouter API Key to start chatting:");
-        if (key) localStorage.setItem('OPENROUTER_SECRET_KEY', key);
+    if (!key || key === "null" || key.trim() === "") {
+        key = prompt("Please enter your secret OpenRouter API Key:");
+        if (key) {
+            localStorage.setItem('OPENROUTER_SECRET_KEY', key.trim());
+        }
     }
     return key;
 }
 
-// THIS IS THE UPDATED FUNCTION (LINE 37 onwards)
 async function sendMessage() {
     const input = document.getElementById('userInput');
     const container = document.getElementById('messagesContainer');
@@ -42,20 +44,20 @@ async function sendMessage() {
 
     const openRouterKey = getOpenRouterKey();
     if (!openRouterKey) {
-        alert("OpenRouter API key is required to send messages.");
+        alert("OpenRouter API key is required.");
         return;
     }
 
     if (!currentChatId) createNewChat();
 
-    // 1. Update UI for User Message
+    // 1. Update UI
     const systemMsg = container.querySelector('.system-message');
     if (systemMsg) systemMsg.remove();
     container.innerHTML += `<div class="message user">${messageText}</div>`;
     input.value = ''; 
     scrollToBottom();
 
-    // 2. Add "Thinking..." Placeholder
+    // 2. Add Thinking Placeholder
     const thinkingId = 'thinking-' + Date.now();
     container.innerHTML += `<div class="message assistant" id="${thinkingId}"><i>Thinking...</i></div>`;
     scrollToBottom();
@@ -83,11 +85,12 @@ async function sendMessage() {
         if (!historyRes.ok) throw new Error(`Supabase Fetch History Failed: ${historyRes.status}`);
         const history = await historyRes.json();
 
-        // 5. Query OpenRouter (with explicitly free model to ensure no token/credit issues)
-      body: JSON.stringify({
-    model: "meta-llama/llama-3-8b-instruct:free", // ❌ Change this line
-    messages: history.map(msg => ({ role: msg.role, content: msg.content }))
-})
+        // 5. Query OpenRouter (Using the guaranteed free llama 3 model)
+        const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${openRouterKey}`,
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
                 model: "meta-llama/llama-3-8b-instruct:free",
@@ -98,7 +101,7 @@ async function sendMessage() {
         const aiData = await openRouterRes.json();
         
         if (aiData.error) {
-            throw new Error(`OpenRouter API Error: ${aiData.error.message || JSON.stringify(aiData.error)}`);
+            throw new Error(`OpenRouter Error: ${aiData.error.message || JSON.stringify(aiData.error)}`);
         }
 
         const aiReply = aiData.choices[0].message.content;
@@ -119,7 +122,6 @@ async function sendMessage() {
     } catch (error) {
         console.error("Chat error:", error);
         if (thinkingBubble) {
-            // This will show you exactly what failed right in the chat window
             thinkingBubble.innerHTML = `<span style="color: #ff6b6b;"><b>Error:</b> ${error.message}</span>`;
         }
     }
