@@ -1,8 +1,9 @@
 const SUPABASE_URL = "https://fpnayeftqadzotnwrpxe.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwbmF5ZWZ0cWFkem90bndycHxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzEyMTcsImV4cCI6MjA5NzUwNzIxN30.b0oJ8pPvKEGgVi-YHfOeAU74-7Rkg0YyLhtbUwQhusk";
+const SUPABASE_ANON_KEY = "sb_publishable_XJzqvm5EBghgVGXlxq8JPA_EGErLAeJ"; 
 
 let currentChatId = null;
 
+// Updated headers to perfectly match the modern Supabase gateway specifications
 const supabaseHeaders = {
     "apikey": SUPABASE_ANON_KEY,
     "Authorization": `Bearer ${SUPABASE_ANON_KEY}`,
@@ -50,14 +51,14 @@ async function sendMessage() {
 
     if (!currentChatId) createNewChat();
 
-    // 1. Update UI
+    // 1. Render User Message to UI
     const systemMsg = container.querySelector('.system-message');
     if (systemMsg) systemMsg.remove();
     container.innerHTML += `<div class="message user">${messageText}</div>`;
     input.value = ''; 
     scrollToBottom();
 
-    // 2. Add Thinking Placeholder
+    // 2. Render Loading State
     const thinkingId = 'thinking-' + Date.now();
     container.innerHTML += `<div class="message assistant" id="${thinkingId}"><i>Thinking...</i></div>`;
     scrollToBottom();
@@ -77,7 +78,7 @@ async function sendMessage() {
             throw new Error(`Supabase Save Failed: ${supabaseSave.status} - ${errData}`);
         }
 
-        // 4. Fetch History
+        // 4. Retrieve Conversational History
         const historyRes = await fetch(`${SUPABASE_URL}/rest/v1/messages?chat_id=eq.${currentChatId}&order=created_at.asc&limit=10`, {
             method: 'GET',
             headers: supabaseHeaders
@@ -85,7 +86,7 @@ async function sendMessage() {
         if (!historyRes.ok) throw new Error(`Supabase Fetch History Failed: ${historyRes.status}`);
         const history = await historyRes.json();
 
-        // 5. Query OpenRouter
+        // 5. Connect to OpenRouter API (Llama 3 Unrestricted Free Tier)
         const openRouterRes = await fetch("https://openrouter.ai/api/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -106,21 +107,21 @@ async function sendMessage() {
 
         const aiReply = aiData.choices[0].message.content;
 
-        // 6. Save AI reply to Supabase
+        // 6. Write AI Response to Database
         await fetch(`${SUPABASE_URL}/rest/v1/messages`, {
             method: 'POST',
             headers: supabaseHeaders,
             body: JSON.stringify({ chat_id: currentChatId, role: 'assistant', content: aiReply })
         });
 
-        // 7. Render AI response
+        // 7. Inject AI Response to UI
         if (thinkingBubble) {
             thinkingBubble.innerHTML = aiReply;
             thinkingBubble.removeAttribute('id');
         }
 
     } catch (error) {
-        console.error("Chat error:", error);
+        console.error("Chat Error Handled:", error);
         if (thinkingBubble) {
             thinkingBubble.innerHTML = `<span style="color: #ff6b6b;"><b>Error:</b> ${error.message}</span>`;
         }
