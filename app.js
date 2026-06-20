@@ -94,7 +94,7 @@ async function sendMessage() {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "meta-llama/llama-3-8b-instruct",
+                model: "openrouter/free",
                 messages: history.map(msg => ({ role: msg.role, content: msg.content }))
             })
         });
