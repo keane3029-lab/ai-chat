@@ -85,12 +85,12 @@ async function sendMessage() {
 
         // 5. Query OpenRouter (with explicitly free model to ensure no token/credit issues)
       body: JSON.stringify({
-    model: "google/gemini-2.5-flash:free", // ❌ Change this line
+    model: "google/gemini-2.5-flash", // ❌ Change this line
     messages: history.map(msg => ({ role: msg.role, content: msg.content }))
 })
             },
             body: JSON.stringify({
-                model: "google/gemini-2.5-flash:free",
+                model: "google/gemini-2.5-flash",
                 messages: history.map(msg => ({ role: msg.role, content: msg.content }))
             })
         });
