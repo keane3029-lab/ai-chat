@@ -1,6 +1,5 @@
 const SUPABASE_URL = "https://fpnayeftqadzotnwrpxe.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwbmF5ZWZ0cWFkem90bndycHxlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzEyMTcsImV4cCI6MjA5NzUwNzIxN30.b0oJ8pPvKEGgVi-YHfOeAU74-7Rkg0YyLhtbUwQhusk";
-
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZwbmF5ZWZ0cWFkem90bndycHhlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzEyMTcsImV4cCI6MjA5NzUwNzIxN30.b0oJ8pPvKEGgVi-YHfOeAU74-7Rkg0YyLhtbUwQhusk"
 let currentChatId = null;
 
 const supabaseHeaders = {
